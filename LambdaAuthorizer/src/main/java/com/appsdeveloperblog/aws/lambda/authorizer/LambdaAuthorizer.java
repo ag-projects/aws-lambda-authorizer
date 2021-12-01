@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 import java.util.Arrays;
 
@@ -17,8 +18,19 @@ public class LambdaAuthorizer implements RequestHandler<APIGatewayProxyRequestEv
         String userName = input.getPathParameters().get("userName");
         String effect = "Allow";
 
-        if(userName.equalsIgnoreCase("123")) {
+        String jwt = input.getHeaders().get("Authorization");
+        String region = System.getenv("AWS_REGION");
+        String userPoolId = System.getenv("PHOTO_APP_USERS_POOL_ID");
+        String audience = System.getenv("PHOTO_APP_USERS_APP_CLIENT_ID");
+
+        JwtUtils jwtUtils = new JwtUtils();
+        DecodedJWT decodedJWT = null;
+        try{
+            decodedJWT = jwtUtils.validateJwtForUser(jwt, region, userPoolId, userName, audience);
+            userName = decodedJWT.getSubject();
+        } catch (RuntimeException ex) {
             effect = "Deny";
+            ex.printStackTrace();
         }
 
         APIGatewayProxyRequestEvent.ProxyRequestContext proxyRequestContext =
