@@ -69,14 +69,6 @@
             <artifactId>cognitoidentityprovider</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/utils -->
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>utils</artifactId>
-        </dependency>
-
-
-
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
